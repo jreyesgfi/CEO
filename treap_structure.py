@@ -2,12 +2,12 @@
 # y otro que represente cada grumo y ordene los usuarios dentro de este.
 
 #Comenzamos con 
-class usuario:
+class Usuario:
     def __init__(self,id):
         self.id = id
         self.hijos = []
         self.padre = None
-class grumoTreap:
+class GrumoTreap:
     def ___init__(self):
         self.arbol = []
 
@@ -15,7 +15,9 @@ class grumoTreap:
 
         # Comprobamos si quedan elementos
         if len(lista) == 0:
-            return usuario(id)
+            usuario = Usuario(id)
+            usuario.__init__(id)
+            return usuario
 
         # Comparamos y bajamos de nivel en el árbol
         if len(lista) == 1:
@@ -37,9 +39,16 @@ class grumoTreap:
             return mediana
 
     def addRelacion(self, id1, id2):
-        elemento1 = self.buscarId(id1,self.arbol)
-        elemento2 = self.buscarId(id2,self.arbol)
+        arbol = self.arbol
+        elemento1 = self.buscarId(id1,arbol)
+        elemento2 = self.buscarId(id2,arbol)
+        print(elemento1.id, elemento2.id)
         elemento1.hijos.append(elemento2)
+
+        # Comprobamos si ya tenía padre el elemento1, si no creamos un grumo
+        if elemento1.padre == None:
+            elemento1.padre = self.arbol
+            self.arbol.append(elemento1)
 
         # Comprobamos si ya tenía padre el elemento2
         padre = elemento2.padre
