@@ -15,6 +15,7 @@ class GrumoTreap:
 
         # Comprobamos si quedan elementos
         if len(lista) == 0:
+            print("estamos aquí", id)
             usuario = Usuario(id)
             usuario.__init__(id)
             return usuario
