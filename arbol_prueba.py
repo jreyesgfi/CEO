@@ -77,6 +77,7 @@ class GrumoTreap:
         self.movimientoDerecha(elemento2)
 
     def movimientoDerecha(self, elemento):
+        
         print("El árbol está así:{}".format(self.representarEnCascada(self.hijos)))
         padre = elemento.padre
         if elemento.id < padre.id:
