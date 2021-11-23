@@ -7,19 +7,19 @@ class Usuario:
         self.id = id
         self.hijos = []
         self.padre = None
+
 class GrumoTreap:
     def ___init__(self):
-        self.arbol = []
+        self.hijos = []
 
     def representarEnCascada(self, lista):
         cadena = ""
         for elemento in lista:
-            cadena += "{}".format(elemento.id)
+            cadena += "{},".format(elemento.id)
             if len(elemento.hijos) == 1:
-                cadena += "->{}".format(self.representarEnCascada(elemento.hijos))
+                cadena += "->{} ".format(self.representarEnCascada(elemento.hijos))
             elif len(elemento.hijos) != 0:
-                cadena += ":({})".format(self.representarEnCascada(elemento.hijos))
-            cadena += " "
+                cadena += ":({}) ".format(self.representarEnCascada(elemento.hijos))
         return cadena
 
 
@@ -51,15 +51,14 @@ class GrumoTreap:
                 return mediana
 
     def addRelacion(self, id1, id2):
-        arbol = self.arbol
-        elemento1 = self.buscarId(id1,arbol)
-        elemento2 = self.buscarId(id2,arbol)
+        elemento1 = self.buscarId(id1,self.hijos)
+        elemento2 = self.buscarId(id2,self.hijos)
         elemento1.hijos.append(elemento2)
 
         # Comprobamos si ya tenía padre el elemento1, si no creamos un grumo
         if elemento1.padre == None:
-            elemento1.padre = self.arbol
-            self.arbol.append(elemento1)
+            elemento1.padre = self
+            self.hijos.append(elemento1)
 
         # Comprobamos si ya tenía padre el elemento2
         padre = elemento2.padre
