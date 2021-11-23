@@ -38,6 +38,7 @@ class GrumoTreap:
             return self.buscarId(id, lista[0].hijos)
 
         # Dividimos la lista en mitades donde centrar la búsqueda
+        # Porqué falla la búsqueda??
         else:
             mitad = len(lista)//2
             mediana = lista[mitad]
