@@ -68,7 +68,7 @@ class GrumoTreap:
         # Comprobamos si ya tenía padre el elemento2
         padre = elemento2.padre
         if padre != None:
-            # En caso afirmativo quitamos este elemento como hijo
+            # En caso afirmativo quitamos este elemento como newHijo
             padre.hijos.pop(padre.hijos.index(elemento2))
         elemento2.padre = elemento1
 
@@ -82,29 +82,37 @@ class GrumoTreap:
         if elemento.id < padre.id:
             abuelo = padre.padre
 
-            # Sustituimos los hijos del abuelo
+            # Eliminamos las instancias pasadas
             print("Vamos a eliminar {} de {}".format(padre.id,abuelo.id))
             abuelo.hijos.pop(abuelo.hijos.index(padre))
-            self.addHijo(elemento, abuelo)
-
-            # Reajustamos hijos y padre del padre previo
             padre.hijos.pop(padre.hijos.index(elemento))
-            padre.padre = elemento
 
-            # Modificamos los hijos y el padre del elemento
-            self.addHijo(padre,elemento)
+            # Redefinimos los padres
+            padre.padre = elemento
             elemento.padre = abuelo
+
+            # Añadimos los hijos de abajo a arriba
+            self.addHijo(padre,elemento)
+            self.addHijo(elemento, abuelo)
 
             # Comprobamos si sigue siendo menor el elemento que su nuevo padre
             self.movimientoDerecha(elemento)
 
-    def addHijo(self,hijo,padre):
-        print("Antes los hijos de {} eran:".format(padre.id))
-        for elemento in padre.hijos:
-            print(elemento.id)
-        padre.hijos.append(hijo)
+    def deleteHijo(self,hijo,padre):
+        padre.hijos.pop(padre.hijos.index(hijo))
+    def addHijo(self,newHijo,padre):
+
+        # Comprobamos si hay algún hijo del padre mayor que el newhijo
+        for hijo in padre.hijos:
+            if newHijo.id < hijo.id:
+                self.deleteHijo(hijo,padre)
+                hijo.padre = newHijo
+                self.addHijo(hijo,newHijo)
+
+        padre.hijos.append(newHijo)
         listaHijos = sorted(padre.hijos)
         padre.hijos = listaHijos
+
         print("Ahora son:")
         for elemento in padre.hijos:
             print(elemento.id)
