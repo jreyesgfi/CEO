@@ -102,13 +102,6 @@ class GrumoTreap:
         padre.hijos.pop(padre.hijos.index(hijo))
     def addHijo(self,newHijo,padre):
 
-        # Comprobamos si hay algún hijo del padre mayor que el newhijo
-        for hijo in padre.hijos:
-            if newHijo.id < hijo.id:
-                self.deleteHijo(hijo,padre)
-                hijo.padre = newHijo
-                self.addHijo(hijo,newHijo)
-
         padre.hijos.append(newHijo)
         listaHijos = sorted(padre.hijos)
         padre.hijos = listaHijos
