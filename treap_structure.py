@@ -11,39 +11,49 @@ class GrumoTreap:
     def ___init__(self):
         self.arbol = []
 
-    def buscarId(self,id,lista):
+    def representarEnCascada(self, lista):
+        cadena = ""
+        for elemento in lista:
+            cadena += "{}".format(elemento.id)
+            if len(elemento.hijos) == 1:
+                cadena += "->{}".format(self.representarEnCascada(elemento.hijos))
+            elif len(elemento.hijos) != 0:
+                cadena += ":({})".format(self.representarEnCascada(elemento.hijos))
+            cadena += " "
+        return cadena
 
+
+    def buscarId(self,id,lista):
         # Comprobamos si quedan elementos
         if len(lista) == 0:
-            print("estamos aquí", id)
             usuario = Usuario(id)
             usuario.__init__(id)
             return usuario
 
         # Comparamos y bajamos de nivel en el árbol
-        if len(lista) == 1:
+        elif len(lista) == 1:
             if lista[0].id == id:
                 return lista[0]
-            self.buscarId(id, lista[0].hijos)
+            return self.buscarId(id, lista[0].hijos)
         
         # Dividimos la lista en mitades donde centrar la búsqueda
-        mitad = len(lista)//2
-        mediana = lista[mitad]
-        if id > mediana.id:
-            # Pasamos la mitad inferior de la lista
-            self.buscarId(id, lista[:mitad])
-        elif id < mediana.id:
-            # Pasamos la mitad superior de la lista
-            self.buscarId(id, lista[mitad:])
         else:
-            # Hemos encontrado el elemento
-            return mediana
+            mitad = len(lista)//2
+            mediana = lista[mitad]
+            if id < mediana.id:
+                # Pasamos la mitad inferior de la lista
+                return self.buscarId(id, lista[:mitad])
+            elif id > mediana.id:
+                # Pasamos la mitad superior de la lista
+                return self.buscarId(id, lista[mitad:])
+            else:
+                # Hemos encontrado el elemento
+                return mediana
 
     def addRelacion(self, id1, id2):
         arbol = self.arbol
         elemento1 = self.buscarId(id1,arbol)
         elemento2 = self.buscarId(id2,arbol)
-        print(elemento1.id, elemento2.id)
         elemento1.hijos.append(elemento2)
 
         # Comprobamos si ya tenía padre el elemento1, si no creamos un grumo
