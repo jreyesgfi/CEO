@@ -83,11 +83,13 @@ class GrumoTreap:
             abuelo = padre.padre
 
             # Sustituimos los hijos del abuelo
+            print("Vamos a eliminar {} de {}".format(padre.id,abuelo.id))
             abuelo.hijos.pop(abuelo.hijos.index(padre))
             self.addHijo(elemento, abuelo)
 
-            # Dejamos sin hijos al antiguo padre
-            padre.hijos = []
+            # Reajustamos hijos y padre del padre previo
+            padre.hijos.pop(padre.hijos.index(elemento))
+            padre.padre = elemento
 
             # Modificamos los hijos y el padre del elemento
             self.addHijo(padre,elemento)
