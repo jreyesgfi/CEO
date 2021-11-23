@@ -8,6 +8,10 @@ class Usuario:
         self.hijos = []
         self.padre = None
 
+    #Método especial que permite al sort discriminar según el parámetro elegido
+    def __lt__(self, other):
+        return self.id < other.id
+
 
 class GrumoTreap:
     def ___init__(self):
@@ -38,29 +42,28 @@ class GrumoTreap:
             return self.buscarId(id, lista[0].hijos)
 
         # Dividimos la lista en mitades donde centrar la búsqueda
-        # Porqué falla la búsqueda??
+
+        mitad = len(lista)//2
+        mediana = lista[mitad]
+        if id < mediana.id:
+            # Pasamos la mitad inferior de la lista
+            return self.buscarId(id, lista[:mitad])
+        elif id > mediana.id:
+            # Pasamos la mitad superior de la lista
+            return self.buscarId(id, lista[mitad:])
         else:
-            mitad = len(lista)//2
-            mediana = lista[mitad]
-            if id < mediana.id:
-                # Pasamos la mitad inferior de la lista
-                return self.buscarId(id, lista[:mitad])
-            elif id > mediana.id:
-                # Pasamos la mitad superior de la lista
-                return self.buscarId(id, lista[mitad:])
-            else:
-                # Hemos encontrado el elemento
-                return mediana
+            # Hemos encontrado el elemento
+            return mediana
 
     def addRelacion(self, id1, id2):
         elemento1 = self.buscarId(id1, self.hijos)
         elemento2 = self.buscarId(id2, self.hijos)
-        elemento1.hijos.append(elemento2)
+        self.addHijo(elemento2,elemento1)
 
         # Comprobamos si ya tenía padre el elemento1, si no creamos un grumo
         if elemento1.padre == None:
             elemento1.padre = self
-            self.hijos.append(elemento1)
+            self.addHijo(elemento1, self)
 
         # Comprobamos si ya tenía padre el elemento2
         padre = elemento2.padre
@@ -74,19 +77,32 @@ class GrumoTreap:
         self.movimientoDerecha(elemento2)
 
     def movimientoDerecha(self, elemento):
+        print("El árbol está así:{}".format(self.representarEnCascada(self.hijos)))
         padre = elemento.padre
         if elemento.id < padre.id:
             abuelo = padre.padre
+
             # Sustituimos los hijos del abuelo
-            abuelo.hijos.append(elemento)
             abuelo.hijos.pop(abuelo.hijos.index(padre))
+            self.addHijo(elemento, abuelo)
 
             # Dejamos sin hijos al antiguo padre
             padre.hijos = []
-            
+
             # Modificamos los hijos y el padre del elemento
-            elemento.hijos.append(padre)
+            self.addHijo(padre,elemento)
             elemento.padre = abuelo
 
             # Comprobamos si sigue siendo menor el elemento que su nuevo padre
             self.movimientoDerecha(elemento)
+
+    def addHijo(self,hijo,padre):
+        print("Antes los hijos de {} eran:".format(padre.id))
+        for elemento in padre.hijos:
+            print(elemento.id)
+        padre.hijos.append(hijo)
+        listaHijos = sorted(padre.hijos)
+        padre.hijos = listaHijos
+        print("Ahora son:")
+        for elemento in padre.hijos:
+            print(elemento.id)
