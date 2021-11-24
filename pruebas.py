@@ -10,6 +10,7 @@ tree.addRelacion(2,4)
 tree.addRelacion(5,3)
 tree.addRelacion(3,7)
 tree.addRelacion(7,4)
+tree.addRelacion(2,1)
 print("###########################")
 for hijo in tree.hijos:
     print(tree.representarEnCascada(hijo))
