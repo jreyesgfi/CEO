@@ -158,21 +158,22 @@ class GrumoTreap:
         antiguoHijoMayor = elemento.hijoMayor
 
         # Definimos una situación por defecto
-        nuevoHijoMayor = antiguoHijoMayor
-        nuevoNietoMenor = antiguoPadre
+        nuevoHijoMayor = antiguoPadre
+        nuevoNietoMenor = antiguoHijoMayor
 
         # Cambiamos la situación si el hijoMayor es mayor que el padre
-        if antiguoPadre:
-            if antiguoPadre > antiguoHijoMayor:
-                nuevoHijoMayor = antiguoPadre
-                nuevoNietoMenor = antiguoHijoMayor
+        if antiguoHijoMayor:
+            if antiguoHijoMayor.id > antiguoPadre.id:
+                nuevoHijoMayor = antiguoHijoMayor
+                nuevoNietoMenor = antiguoPadre
         
         # Realizamos los cambios
         antiguoPadre.hijoMenor = None
         elemento.padre = antiguoPadre.padre
 
         elemento.hijoMayor = nuevoHijoMayor
-        self.anexarRama(nuevoNietoMenor,nuevoHijoMayor)
+        if nuevoNietoMenor:
+            self.anexarRama(nuevoNietoMenor,nuevoHijoMayor)
 
         # Verificamos si estamos en la cima
         if elemento.padre != self:
