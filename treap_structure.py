@@ -35,51 +35,53 @@ class GrumoTreap:
             cadena += "el mayor {}".format(elemento.hijoMayor.id)
         if elemento.hijoMenor:
             cadena += "o el menor {}".format(elemento.hijoMenor.id)
-        # print(cadena)
+        print(cadena)
 
         # Comparamos el id con el del elemento
         if id > elemento.id:
 
-            # print("el que buscamos es mayor")
-            # Repetimos la iteración
-            if elemento.hijoMayor:
-                return self.buscarUsuario(id,elemento.hijoMayor)
-            # No lo hemos encontrado
-            return None
-
-        if id < elemento.id:
-
-            # print("el que buscamos es menor")
+            print("el que buscamos es mayor")
             # Repetimos la iteración
             if elemento.hijoMenor:
                 return self.buscarUsuario(id,elemento.hijoMenor)
             # No lo hemos encontrado
             return None
 
+        if id < elemento.id:
+
+            print("el que buscamos es menor")
+            # Repetimos la iteración
+            if elemento.hijoMayor:
+                return self.buscarUsuario(id,elemento.hijoMayor)
+            # No lo hemos encontrado
+            return None
+
         # Si el usuario es el elemento lo retornamos
-        # print("son iguales")
+        print("son iguales")
         return elemento
+
 
     def comprobarExistencia(self, id):
         
         elemento = None
-        # print("buscamos el id ", id)
+        print("buscamos el id ", id)
         for hijo in self.hijos:
-            # print("intento con el hijo", hijo.id)
+            print("intento con el hijo", hijo.id)
             elemento = self.buscarUsuario(id,hijo)
             if elemento:
-                # print("el elemento era ", elemento.id)
+                print("el elemento era ", elemento.id)
                 break
-        # if elemento:
-            # print("el elemento es ",elemento.id)
+        if elemento:
+            print("el elemento es ",elemento.id)
         # Si no existia lo creamos
         if not elemento:
-            # print("el elemento no es")
+            print("el elemento no es")
             elemento = Usuario(id)
             elemento.padre = self
             self.hijos.append(elemento)
 
         return elemento
+
 
     def anexarRama(self, hijo, padre):
 
@@ -99,7 +101,7 @@ class GrumoTreap:
                 self.anexarRama(hijo,padre.hijoMenor)
 
             else:
-                # print("añadimos el hijo {} al padre {}".format(hijo.id,padre.id))
+                print("añadimos el hijo {} al padre {}".format(hijo.id,padre.id))
                 padre.hijoMenor = hijo
                 hijo.padre = padre
 
@@ -109,25 +111,25 @@ class GrumoTreap:
         # Comprobamos si ya están los hijos y donde están
         elemento1 = self.comprobarExistencia(id1)
         elemento2 = self.comprobarExistencia(id2)
-
-        # Movemos el elemento2 a ser hijo del elemento1
-
-        # Eliminamos el anterior registro
+        
         padre = elemento2.padre
-        if padre == self:
-            self.hijos.pop(self.hijos.index(elemento2))
-        else:
+        # Aplicamos movimientos para dejar el elemento2 en la cabeza
+        if padre != self:
             if padre.id > elemento2.id:
                 self.movimientoDerecha(elemento2)
             else: self.movimientoIzquierda(elemento2)
-        
-        # Creamos el nuevo registro
+
+        # Eliminamos dicho árbol del registro
+        self.hijos.pop(self.hijos.index(elemento2))
+
+        # Anexamos dicho árbol al elemento1
         self.anexarRama(elemento2,elemento1)
         
         print("---------------------------")
         for usuario in self.hijos:
-            print(self.representarEnCascada(usuario,0))
+            print(self.representarEnCascada(usuario))
         
+
     def movimientoDerecha(self, elemento):
         
         antiguoPadre = elemento.padre
@@ -143,25 +145,39 @@ class GrumoTreap:
                 nuevoHijoMayor = antiguoHijoMayor
                 nuevoNietoMenor = antiguoPadre
         
-        # Redefinimos las relaciones del elemento
+        # Eliminamos los elementos propios del movimientoDerecha
         elemento.hijoMayor = None
-        elemento.padre = antiguoPadre.padre
-
-        # Borramos las relaciones previas del antiguoPadre
-        antiguoPadre.padre = None
         antiguoPadre.hijoMenor = None
 
-        # Introducimos el nuevoHijoMayor
-        self.anexarRama(nuevoHijoMayor, elemento)
+        # Llamamos a movimiento
+        self.movimiento(elemento, nuevoHijoMayor, nuevoNietoMenor)
+        
 
-        # Introducimos el nuevoNieto
-        if nuevoNietoMenor:
-            self.anexarRama(nuevoNietoMenor,nuevoHijoMayor)
-        
-        # Comprobamos si es necesario seguir subiendo
-        self.recurrenciaDeMovimiento(elemento,antiguoPadre)
-        
     def movimientoIzquierda(self, elemento):
+        
+        antiguoPadre = elemento.padre
+        antiguoHijo = elemento.hijoMenor
+
+        # Definimos una situación por defecto
+        nuevoHijo = antiguoPadre
+        nuevoNieto = antiguoHijo
+
+        # Cambiamos la situación si el hijoMayor es mayor que el padre
+        if antiguoHijo:
+            if antiguoHijo.id < antiguoPadre.id:
+                nuevoHijo = antiguoHijo
+                nuevoNieto = antiguoPadre
+        
+        # Eliminamos los elementos propios del movimientoIzquierda
+        elemento.hijoMenor = None
+        antiguoPadre.hijoMayor = None
+
+        # Llamamos a movimiento
+        self.movimiento(elemento, nuevoHijo, nuevoNieto)
+
+
+
+    def movimiento(self, elemento,nuevoHijo, nuevoNieto):
         
         antiguoPadre = elemento.padre
         antiguoHijo = elemento.hijoMenor
@@ -194,9 +210,11 @@ class GrumoTreap:
         # Comprobamos si es necesario seguir subiendo
         self.recurrenciaDeMovimiento(elemento,antiguoPadre)
         
+
+
+
     def recurrenciaDeMovimiento(self,elemento, antiguoPadre):
         
-
         # Verificamos si estamos en la cima
         if elemento.padre != self:
             

@@ -2,6 +2,8 @@ import treap_structure as treap
 
 tree = treap.GrumoTreap()
 primerHijo = treap.Usuario(0)
+otroHijo = treap.Usuario(19)
+primerHijo.hijoMayor = otroHijo
 tree.___init__(primerHijo)
 tree.addRelacion(6,2)
 tree.addRelacion(2,4)
