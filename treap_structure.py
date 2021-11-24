@@ -19,12 +19,13 @@ class GrumoTreap:
         self.hijos = [primerHijo]
         self.id = 0
 
-    def representarEnCascada(self, elemento,espacios):
+    def representarEnCascada(self, elemento,espacios,iteraciones=20):
         espacios += 1
+        iteraciones -= 1
         cadena= "-"
-        if elemento:
+        if elemento and iteraciones>0:
             espacios += 3
-            cadena = "{}->|{} \n{}|{}".format(elemento.id,self.representarEnCascada(elemento.hijoMenor,espacios),(" "*espacios),self.representarEnCascada(elemento.hijoMayor,espacios))
+            cadena = "{}->|{} \n{}|{}".format(elemento.id,self.representarEnCascada(elemento.hijoMenor,espacios,iteraciones),(" "*espacios),self.representarEnCascada(elemento.hijoMayor,espacios,iteraciones))
         
         return cadena
 
@@ -58,32 +59,6 @@ class GrumoTreap:
         # Si el usuario es el elemento lo retornamos
         # print("son iguales")
         return elemento
-
-    # def addUsuario(self, newUsuario, usuarioPadre):
-
-    #     # Comparamos el id con el del usuarioPadre
-    #     if newUsuario.id > usuarioPadre.id:
-
-    #         # Repetimos la iteración
-    #         if usuarioPadre.hijoMayor:
-    #             return self.addUsuario(newUsuario,usuarioPadre.hijoMayor)
-    #         # Creamos el usuario
-    #         usuarioPadre.hijoMayor = newUsuario
-    #         newUsuario.padre = usuarioPadre
-    #         return usuarioPadre.hijoMayor
-
-    #     if newUsuario < usuarioPadre.id:
-
-    #         # Repetimos la iteración
-    #         if usuarioPadre.hijoMenor:
-    #             return self.addUsuario(newUsuario,usuarioPadre.hijoMenor)
-    #         # Creamos el usuario  
-    #         usuarioPadre.hijoMenor = newUsuario
-    #         newUsuario.padre = usuarioPadre
-    #         return usuarioPadre.hijoMenor
-
-    #     # Si el usuario es el usuarioPadre lo retornamos
-    #     return usuarioPadre
 
     def comprobarExistencia(self, id):
         
@@ -149,22 +124,23 @@ class GrumoTreap:
         # Creamos el nuevo registro
         self.anexarRama(elemento2,elemento1)
         
+        print("---------------------------")
         for usuario in self.hijos:
             print(self.representarEnCascada(usuario,0))
         
     def movimientoDerecha(self, elemento):
         
         antiguoPadre = elemento.padre
-        antiguoHijoMayor = elemento.hijoMayor
+        antiguoHijoMenor = elemento.hijoMayor
 
         # Definimos una situación por defecto
         nuevoHijoMayor = antiguoPadre
-        nuevoNietoMenor = antiguoHijoMayor
+        nuevoNietoMenor = antiguoHijoMenor
 
         # Cambiamos la situación si el hijoMayor es mayor que el padre
-        if antiguoHijoMayor:
-            if antiguoHijoMayor.id > antiguoPadre.id:
-                nuevoHijoMayor = antiguoHijoMayor
+        if antiguoHijoMenor:
+            if antiguoHijoMenor.id > antiguoPadre.id:
+                nuevoHijoMayor = antiguoHijoMenor
                 nuevoNietoMenor = antiguoPadre
         
         # Realizamos los cambios
@@ -174,30 +150,83 @@ class GrumoTreap:
         elemento.hijoMayor = nuevoHijoMayor
         if nuevoNietoMenor:
             self.anexarRama(nuevoNietoMenor,nuevoHijoMayor)
+        
+        # Verificamos si estamos en la cima
+        if elemento.padre != self:
+            
+            # Eliminamos los registros en el abuelo
+            if elemento.padre.hijoMenor == antiguoPadre:
+                elemento.padre.hijoMenor = None
+            else: elemento.padre.hijoMayor = None
+        #self.recurrenciaDeMovimiento(elemento,antiguoPadre)
+        
+    def movimientoIzquierda(self, elemento):
+        antiguoPadre = elemento.padre
+        antiguoHijoMenor = elemento.hijoMenor
+
+        # Definimos una situación por defecto
+        nuevoHijoMenor = antiguoPadre
+        nuevoNietoMenor = antiguoHijoMenor
+
+        # Cambiamos la situación si el hijoMenor es mayor que el padre
+        if antiguoHijoMenor:
+            if antiguoHijoMenor.id < antiguoPadre.id:
+                nuevoHijoMenor = antiguoHijoMenor
+                nuevoNietoMenor = antiguoPadre
+        
+        # Realizamos los cambios
+        antiguoPadre.hijoMenor = None
+        elemento.padre = antiguoPadre.padre
+
+        elemento.hijoMenor = nuevoHijoMenor
+        if nuevoNietoMenor:
+            self.anexarRama(nuevoNietoMenor,nuevoHijoMenor)
 
         # Verificamos si estamos en la cima
         if elemento.padre != self:
             
+            # Eliminamos los registros en el abuelo
+            if elemento.padre.hijoMenor == antiguoPadre:
+                elemento.padre.hijoMenor = None
+            else: elemento.padre.hijoMayor = None
+        #self.recurrenciaDeMovimiento(elemento,antiguoPadre)
 
-            # Comprobamos si su nuevo padre es mayor o menor
+    def recurrenciaDeMovimiento(self,elemento, antiguoPadre):
+        
+
+        # Verificamos si estamos en la cima
+        if elemento.padre != self:
+            
+            # Eliminamos los registros en el abuelo
+            if elemento.padre.hijoMenor == antiguoPadre:
+                elemento.padre.hijoMenor = None
+            else: elemento.padre.hijoMayor = None
+
+            # Determinamos si el elemento es hijoMenor o hijoMayor
             if elemento.padre.id < elemento.id:
 
                 if elemento.padre.hijoMayor:
                     # Debemos mover todo el hijoMayor dentro de nuestra rama
-                    self.anexarRama(elemento, elemento.padre.hijoMayor)
+                    self.anexarRama(elemento.padre.hijoMayor, elemento)
                 
+                # Modificamos los hijos del nuevo padre
                 elemento.padre.hijoMayor = elemento
 
                 # Repetimos el proceso
                 self.movimientoIzquierda(elemento)                
             
             else:
+
+                if elemento.padre.hijoMenor:
+                    # Debemos mover todo el hijoMayor dentro de nuestra rama
+                    self.anexarRama(elemento, elemento.padre.hijoMenor)
+
                 elemento.padre.hijoMenor = elemento
 
                 # Repetimos el proceso
-                self.movimientoDerecha(elemento) 
+                self.movimientoDerecha(elemento)
+
+        # Si estamos en la cima sustituimos el antiguo hijo
+        #elemento.padre.hijos.pop(elemento.padre.hijos.index(antiguoPadre))
+        elemento.padre.hijos.append(elemento)
             
-                
-        
-    def movimientoIzquierda(self, elemento):
-        elemento.padre.hijoMayor = None
