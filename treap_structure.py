@@ -42,8 +42,8 @@ class GrumoTreap:
 
             print("el que buscamos es mayor")
             # Repetimos la iteración
-            if elemento.hijoMenor:
-                return self.buscarUsuario(id,elemento.hijoMenor)
+            if elemento.hijoMayor:
+                return self.buscarUsuario(id,elemento.hijoMayor)
             # No lo hemos encontrado
             return None
 
@@ -51,8 +51,8 @@ class GrumoTreap:
 
             print("el que buscamos es menor")
             # Repetimos la iteración
-            if elemento.hijoMayor:
-                return self.buscarUsuario(id,elemento.hijoMayor)
+            if elemento.hijoMenor:
+                return self.buscarUsuario(id,elemento.hijoMenor)
             # No lo hemos encontrado
             return None
 
@@ -112,23 +112,33 @@ class GrumoTreap:
         elemento1 = self.comprobarExistencia(id1)
         elemento2 = self.comprobarExistencia(id2)
         
-        padre = elemento2.padre
+        # padre = elemento2.padre
         # Aplicamos movimientos para dejar el elemento2 en la cabeza
-        if padre != self:
-            if padre.id > elemento2.id:
-                self.movimientoDerecha(elemento2)
-            else: self.movimientoIzquierda(elemento2)
+        # if padre != self:
+        #     if padre.id > elemento2.id:
+        #         self.movimientoDerecha(elemento2)
+        #     else: self.movimientoIzquierda(elemento2)
+        raiz2 = self.identificarRaiz(elemento2)
+        raiz1 = self.identificarRaiz(elemento1)
 
         # Eliminamos dicho árbol del registro
-        self.hijos.pop(self.hijos.index(elemento2))
+        self.hijos.pop(self.hijos.index(raiz2))
 
         # Anexamos dicho árbol al elemento1
-        self.anexarRama(elemento2,elemento1)
+        self.anexarRama(raiz2,raiz1)
         
         print("---------------------------")
         for usuario in self.hijos:
             print(self.representarEnCascada(usuario))
         
+
+    def identificarRaiz(self,elemento):
+        if elemento.padre != self:
+           return self.identificarRaiz(elemento.padre)
+
+        return elemento
+
+
 
     def movimientoDerecha(self, elemento):
         
