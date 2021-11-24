@@ -19,7 +19,7 @@ class GrumoTreap:
         self.hijos = [primerHijo]
         self.id = 0
 
-    def representarEnCascada(self, elemento,espacios,iteraciones=20):
+    def representarEnCascada(self, elemento,espacios=0,iteraciones=20):
         espacios += 1
         iteraciones -= 1
         cadena= "-"
@@ -131,66 +131,69 @@ class GrumoTreap:
     def movimientoDerecha(self, elemento):
         
         antiguoPadre = elemento.padre
-        antiguoHijoMenor = elemento.hijoMayor
+        antiguoHijoMayor = elemento.hijoMayor
 
         # Definimos una situación por defecto
         nuevoHijoMayor = antiguoPadre
-        nuevoNietoMenor = antiguoHijoMenor
+        nuevoNietoMenor = antiguoHijoMayor
 
         # Cambiamos la situación si el hijoMayor es mayor que el padre
-        if antiguoHijoMenor:
-            if antiguoHijoMenor.id > antiguoPadre.id:
-                nuevoHijoMayor = antiguoHijoMenor
+        if antiguoHijoMayor:
+            if antiguoHijoMayor.id > antiguoPadre.id:
+                nuevoHijoMayor = antiguoHijoMayor
                 nuevoNietoMenor = antiguoPadre
         
-        # Realizamos los cambios
-        antiguoPadre.hijoMenor = None
+        # Redefinimos las relaciones del elemento
+        elemento.hijoMayor = None
         elemento.padre = antiguoPadre.padre
 
-        elemento.hijoMayor = nuevoHijoMayor
+        # Borramos las relaciones previas del antiguoPadre
+        antiguoPadre.padre = None
+        antiguoPadre.hijoMenor = None
+
+        # Introducimos el nuevoHijoMayor
+        self.anexarRama(nuevoHijoMayor, elemento)
+
+        # Introducimos el nuevoNieto
         if nuevoNietoMenor:
             self.anexarRama(nuevoNietoMenor,nuevoHijoMayor)
         
-        # Verificamos si estamos en la cima
-        if elemento.padre != self:
-            
-            # Eliminamos los registros en el abuelo
-            if elemento.padre.hijoMenor == antiguoPadre:
-                elemento.padre.hijoMenor = None
-            else: elemento.padre.hijoMayor = None
-        #self.recurrenciaDeMovimiento(elemento,antiguoPadre)
+        # Comprobamos si es necesario seguir subiendo
+        self.recurrenciaDeMovimiento(elemento,antiguoPadre)
         
     def movimientoIzquierda(self, elemento):
+        
         antiguoPadre = elemento.padre
-        antiguoHijoMenor = elemento.hijoMenor
+        antiguoHijo = elemento.hijoMenor
 
         # Definimos una situación por defecto
-        nuevoHijoMenor = antiguoPadre
-        nuevoNietoMenor = antiguoHijoMenor
+        nuevoHijo = antiguoPadre
+        nuevoNieto = antiguoHijo
 
-        # Cambiamos la situación si el hijoMenor es mayor que el padre
-        if antiguoHijoMenor:
-            if antiguoHijoMenor.id < antiguoPadre.id:
-                nuevoHijoMenor = antiguoHijoMenor
-                nuevoNietoMenor = antiguoPadre
+        # Cambiamos la situación si el hijoMayor es mayor que el padre
+        if antiguoHijo:
+            if antiguoHijo.id < antiguoPadre.id:
+                nuevoHijo = antiguoHijo
+                nuevoNieto = antiguoPadre
         
-        # Realizamos los cambios
-        antiguoPadre.hijoMenor = None
+        # Redefinimos las relaciones del elemento
+        elemento.hijoMenor = None
         elemento.padre = antiguoPadre.padre
 
-        elemento.hijoMenor = nuevoHijoMenor
-        if nuevoNietoMenor:
-            self.anexarRama(nuevoNietoMenor,nuevoHijoMenor)
+        # Borramos las relaciones previas del antiguoPadre
+        antiguoPadre.padre = None
+        antiguoPadre.hijoMayor = None
 
-        # Verificamos si estamos en la cima
-        if elemento.padre != self:
-            
-            # Eliminamos los registros en el abuelo
-            if elemento.padre.hijoMenor == antiguoPadre:
-                elemento.padre.hijoMenor = None
-            else: elemento.padre.hijoMayor = None
-        #self.recurrenciaDeMovimiento(elemento,antiguoPadre)
+        # Introducimos el nuevoHijo
+        self.anexarRama(nuevoHijo, elemento)
 
+        # Introducimos el nuevoNieto
+        if nuevoNieto:
+            self.anexarRama(nuevoNieto,nuevoHijo)
+        
+        # Comprobamos si es necesario seguir subiendo
+        self.recurrenciaDeMovimiento(elemento,antiguoPadre)
+        
     def recurrenciaDeMovimiento(self,elemento, antiguoPadre):
         
 
@@ -227,6 +230,11 @@ class GrumoTreap:
                 self.movimientoDerecha(elemento)
 
         # Si estamos en la cima sustituimos el antiguo hijo
-        #elemento.padre.hijos.pop(elemento.padre.hijos.index(antiguoPadre))
-        elemento.padre.hijos.append(elemento)
+        for hijo in self.hijos:
+            print(self.representarEnCascada(hijo))
+        print("el elemento es: ",antiguoPadre.id)
+        for hijo in self.hijos:
+            if hijo.id == antiguoPadre.id:
+                self.hijos.pop(self.hijos.index(hijo))
+        self.hijos.append(elemento)
             
