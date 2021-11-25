@@ -105,31 +105,23 @@ class GrumoTreap:
                 padre.hijoMenor = hijo
                 hijo.padre = padre
 
+    def obtenerTodos(self, raiz):
+        if raiz.hijoMenor:
+            self.obtenerTodos(raiz.hijoMenor)
+        if raiz.hijoMayor:
+            self.obtenerTodos(raiz.hijoMayor)
+        if raiz == self:
+            return lista
+        return raiz
 
-    def addRelacion(self, id1, id2):
-
-        # Comprobamos si ya están los hijos y donde están
-        elemento1 = self.comprobarExistencia(id1)
-        elemento2 = self.comprobarExistencia(id2)
-        
-        # padre = elemento2.padre
-        # Aplicamos movimientos para dejar el elemento2 en la cabeza
-        # if padre != self:
-        #     if padre.id > elemento2.id:
-        #         self.movimientoDerecha(elemento2)
-        #     else: self.movimientoIzquierda(elemento2)
-        raiz2 = self.identificarRaiz(elemento2)
-        raiz1 = self.identificarRaiz(elemento1)
-
-        # Eliminamos dicho árbol del registro
-        self.hijos.pop(self.hijos.index(raiz2))
-
-        # Anexamos dicho árbol al elemento1
-        self.anexarRama(raiz2,raiz1)
-        
-        print("---------------------------")
-        for usuario in self.hijos:
-            print(self.representarEnCascada(usuario))
+    def llamadaEnCadena(self, elemento):
+        if elemento.hijoMenor:
+            self.obtenerTodos(elemento.hijoMenor)
+        if elemento.hijoMayor:
+            self.obtenerTodos(elemento.hijoMayor)
+        if elemento == self:
+            return lista
+        return elemento
         
 
     def identificarRaiz(self,elemento):
