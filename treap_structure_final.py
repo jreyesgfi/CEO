@@ -92,6 +92,7 @@ class Bosque(NodoArbol):
         for grumo in self.grumos:
             tamaño = self.tamañoGrumo(grumo)
             porcentajes.append(tamaño/tamañoTotal)
+        porcentajes.sort(reverse = True)
         return porcentajes
             
 
