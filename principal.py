@@ -43,9 +43,9 @@ def seleccion_grumos(grus,usr,porcen):
     pass
 def main():
     # Preguntar fichero a abrir y porcentaje
-    principal = input("Introduzca el nombre del fichero principal.")
+    principal = input("Introduzca el nombre del fichero principal:\n")
     #   extra = input("Introduzca el nombre del fichero extra o pulse ENTER.")
-    porcen = float(input("Introduzca el porcentaje deseado")) / 100
+    porcen = float(input("Introduzca el porcentaje deseado:\n")) / 100
 
     # Leemos el documento y construimos el árbol conexión
     tiempo1 = time.time()
@@ -62,18 +62,20 @@ def main():
 
     #---MOSTRAR POR PANTALLA RESULTADOS---#
 
-    #Usuarios conexiones y porcentaje
+    #   Usuarios conexiones y porcentaje
     #   print("Número de usuarios: " + str(len(usr))+". "+"Número de relaciones: "+ str(len(red)) + ".")
     print("Tamaño en porcentaje del mayor grumo deseado: " + str(porcen*100) + "%.")
 
-    #Tiempos
+    #   Tiempos
     print("Duración leer documento: {:.5f} seg.".format(t_leer_doc))
     print("Duración creación lista grumos: {:.5f} seg.".format(t_lista_grumos) )
 
-    #Ranking grumos
+    #   Ranking grumos
     print("Existen {} grumos.".format( len(bosque.grumos) ) )
     i = 0
-    for porcentaje in bosque.obtenerPorcentajes():
+
+    #   Recuperamos cada uno de los porcentajes de los grumos
+    for porcentaje in bosque.obtenerPorcentajes(porcen):
         i += 1
         print("El porcentaje del grumo {} es {:.2f}".format(i,porcentaje))
 

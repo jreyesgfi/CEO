@@ -86,14 +86,22 @@ class Bosque(NodoArbol):
             cadena = "{}->|{} \n{}|{}".format(elemento.id,self.representarEnCascada(elemento.hijoMenor,espacios,iteraciones),(" "*espacios),self.representarEnCascada(elemento.hijoMayor,espacios,iteraciones))
         return cadena
 
-    def obtenerPorcentajes(self):
+    def obtenerPorcentajes(self,porcentaje):
         tamañoTotal = self.tamañoGrumo(self.conexiones)
         porcentajes = []
         for grumo in self.grumos:
             tamaño = self.tamañoGrumo(grumo)
             porcentajes.append(tamaño/tamañoTotal)
-        porcentajes.sort(reverse = True)
-        return porcentajes
+
+            #   Comprobamos si hemos llegado al porcentaje necesario
+            porcentaje -= tamaño/tamañoTotal
+            if porcentaje <= 0:
+
+                #   Si es así ordenamos los grumos y los devolvemos
+                porcentajes.sort(reverse = True)
+                return porcentajes
+
+        
             
 
 
