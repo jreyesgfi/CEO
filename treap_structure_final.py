@@ -45,14 +45,15 @@ class Bosque(NodoArbol):
         usuario2.relaciones.append(id1)
 
     def construirGrumos(self,raizGrumo,id):
-
+        print('vamos a construir un grumo', id)
         # comprobar si usuario esta asig y si no lo añadimos
         usuarioAssig = self.assig.addUsuario(id)
         if usuarioAssig.nuevo:
-
+            print('el usuario era nuevo')
             #   Añadimos el usuario al árbol del grumo particular
             raizGrumo.addUsuario(id)
             for hijo in self.conexiones.addUsuario(id).relaciones:
+                print('tenemos un hijo', hijo)
                 self.construirGrumos(raizGrumo,hijo)
     
     def crearGrumos(self, raizGrumoConex):
@@ -60,7 +61,6 @@ class Bosque(NodoArbol):
         # comprobar si usuario esta asig y si no lo añadimos
         usuarioAssig = self.assig.addUsuario(raizGrumoConex.id)
         if usuarioAssig.nuevo:
-
             #   Si no estaba creamos un nuevo grumo
             raizGrumo = NodoArbol(raizGrumoConex.id)
             self.grumos.append(raizGrumo)
@@ -75,11 +75,14 @@ class Bosque(NodoArbol):
     def representarGrumos(self):
         for grumo in self.grumos:
             self.representarEnCascada(grumo)
+            print("-----------")
     def representarEnCascada(self, elemento,espacios=0,iteraciones=20):
+        
         espacios += 1
         iteraciones -= 1
         cadena= "-"
         if elemento and iteraciones>0:
+            print(elemento.id)
             espacios += 3
             cadena = "{}->|{} \n{}|{}".format(elemento.id,self.representarEnCascada(elemento.hijoMenor,espacios,iteraciones),(" "*espacios),self.representarEnCascada(elemento.hijoMayor,espacios,iteraciones))
         
