@@ -88,18 +88,18 @@ class Bosque(NodoArbol):
 
     def obtenerPorcentajes(self,porcentaje):
         tamañoTotal = self.tamañoGrumo(self.conexiones)
-        porcentajes = []
+        grumosSeleccionados = []
         for grumo in self.grumos:
-            tamaño = self.tamañoGrumo(grumo)
-            porcentajes.append(tamaño/tamañoTotal)
+            grumoPorcentaje = self.tamañoGrumo(grumo)/tamañoTotal
+            grumosSeleccionados.append( {'raiz': grumo, 'porcentaje':grumoPorcentaje} )
 
             #   Comprobamos si hemos llegado al porcentaje necesario
-            porcentaje -= tamaño/tamañoTotal
+            porcentaje -= grumoPorcentaje
             if porcentaje <= 0:
 
                 #   Si es así ordenamos los grumos y los devolvemos
-                porcentajes.sort(reverse = True)
-                return porcentajes
+                grumosSeleccionados.sort(key= lambda grumo : grumo['porcentaje'], reverse = True)
+                return grumosSeleccionados
 
         
             

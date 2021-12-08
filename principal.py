@@ -39,8 +39,24 @@ def leer_relaciones(fprin):
     #                 red.append(nr)
     # return (red)
 
-def seleccion_grumos(grus,usr,porcen):
-    pass
+def seleccion_grumos(bosque, porcen):
+    grumosSeleccionados = bosque.obtenerPorcentajes(porcen)
+    #  Salvamos las nuevas relaciones
+    f = open("extra.txt","w") #De esta forma se borra automáticamente el anterior extra.txt
+    grumoPasado = None
+    for grumo in grumosSeleccionados:
+        # Comprobamos que no estamos en el primer grupo
+        if grumoPasado != None:
+            # Proponemos la nueva relación
+            f.write(grumo['raiz'].id+" "+grumoPasado['raiz'].id+"\n")
+        # Definimos el nuevo grumo
+        grumoPasado = grumo
+        
+            
+
+
+    return grumosSeleccionados
+
 def main():
     # Preguntar fichero a abrir y porcentaje
     principal = input("Introduzca el nombre del fichero principal:\n")
@@ -58,7 +74,11 @@ def main():
     t_lista_grumos = time.time() - tiempo1
 
     # Selección de grumos
-    #
+    tiempo1=time.time()
+    grumosSeleccionados = seleccion_grumos(bosque, porcen)
+    t_seleccion_grumos = time.time() - tiempo1
+
+
 
     #---MOSTRAR POR PANTALLA RESULTADOS---#
 
@@ -69,17 +89,27 @@ def main():
     #   Tiempos
     print("Duración leer documento: {:.5f} seg.".format(t_leer_doc))
     print("Duración creación lista grumos: {:.5f} seg.".format(t_lista_grumos) )
+    print("Duración selección grumos: {:.5f} seg.".format(t_seleccion_grumos) )
 
     #   Ranking grumos
     print("Existen {} grumos.".format( len(bosque.grumos) ) )
-    i = 0
 
     #   Recuperamos cada uno de los porcentajes de los grumos
-    for porcentaje in bosque.obtenerPorcentajes(porcen):
+    i = 0
+    for grumo in grumosSeleccionados:
         i += 1
-        print("El porcentaje del grumo {} es {:.2f}".format(i,porcentaje))
+        print("El porcentaje del grumo {} es {:.2f}".format(i,grumo['porcentaje']))
 
-    #Recomendaciones de uniones
+
+    #   Recomendaciones de uniones
+    if len(grumosSeleccionados) !=1:
+        print("Las nuevas relaciones de amistad (salvadas en extra.txt) son:")
+        with open("extra.txt") as f:
+            for linea in f:
+                pareja = linea.split()
+                print("{} con {}.".format(pareja[0],pareja[1]))
+    else:
+        print("No hacen falta nuevas relaciones de amistad.")
 main()
 
 
