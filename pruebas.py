@@ -23,3 +23,7 @@ for parejaNumero in [(5,2),(10,3),(21,15),(4,2),(5,7),(8,10),(8,4)]:
     bosque.addConexion(parejaNumero[0],parejaNumero[1])
 bosque.crearGrumos(bosque.conexiones)
 bosque.representarGrumos()
+i = 0
+for porcentaje in bosque.obtenerPorcentajes():
+    i += 1
+    print("El porcentaje del grumo {} es {:.2f}".format(i,porcentaje))

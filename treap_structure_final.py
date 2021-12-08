@@ -70,6 +70,9 @@ class Bosque(NodoArbol):
             self.crearGrumos(raizGrumoConex.hijoMenor)
         if raizGrumoConex.hijoMayor:
             self.crearGrumos(raizGrumoConex.hijoMayor)
+
+
+    #----MÉTODOS DE REPRESENTACIÓN---#  
     def representarGrumos(self):
         for grumo in self.grumos:
             print(self.representarEnCascada(grumo))
@@ -82,3 +85,23 @@ class Bosque(NodoArbol):
             espacios += 3
             cadena = "{}->|{} \n{}|{}".format(elemento.id,self.representarEnCascada(elemento.hijoMenor,espacios,iteraciones),(" "*espacios),self.representarEnCascada(elemento.hijoMayor,espacios,iteraciones))
         return cadena
+
+    def obtenerPorcentajes(self):
+        tamañoTotal = self.tamañoGrumo(self.conexiones)
+        porcentajes = []
+        for grumo in self.grumos:
+            tamaño = self.tamañoGrumo(grumo)
+            porcentajes.append(tamaño/tamañoTotal)
+        return porcentajes
+            
+
+
+    def tamañoGrumo(self,usuario):
+        valor = 1
+
+        if usuario.hijoMayor:
+            valor += self.tamañoGrumo(usuario.hijoMayor)
+        if usuario.hijoMenor:
+            valor += self.tamañoGrumo(usuario.hijoMenor)
+
+        return valor
