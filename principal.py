@@ -1,5 +1,6 @@
 import time
 import treap_structure_final as treap
+import random
 
 
 
@@ -12,20 +13,40 @@ bosque.___init__()
 #Empezamos leyendo las líneas del documento una a una
 def leer_relaciones(fprin, fextra):
 
-    #   Leemos el fichero y modificamos nuestro registro
-    with open(fprin) as f:
-        l = 0
-        for linea in f:
-            #   Recuperamos los valos del número de relaciones y usuarios, aunque no serán usados pues tomaremos los brindados por la función len sobre ambas listas
-            if(l == 0):
-                n = int(linea)
-            elif (l == 1):
-                m = int(linea)
-            else:
-                #   Definimos una nueva relación
-                pareja = linea.split()
-                bosque.addConexion(pareja[0],pareja[1])
-            l = l + 1
+    #   Abrimos el fichero
+    with open(fprin) as f: 
+
+        #   Construimos el array para poder leer las líneas desordenadas
+        content = f.readlines()
+        print(len(content))
+        numLineas = int(content[1])
+        while numLineas > 2:
+            #  Leemos aleatoriamente para mejorar eficiencia
+            linea = random.randint(2, numLineas)
+            pareja = content[linea].split()
+
+            #   Definimos una nueva relación
+            bosque.addConexion(pareja[0],pareja[1])
+            
+            #   Retiramos esta línea del array
+            content.pop(linea)
+            numLineas -= 1
+
+
+    # #   Leemos el fichero y modificamos nuestro registro
+    # with open(fprin) as f:
+    #     l = 0
+    #     for linea in f:
+    #         #   Recuperamos los valos del número de relaciones y usuarios, aunque no serán usados pues tomaremos los brindados por la función len sobre ambas listas
+    #         if(l == 0):
+    #             n = int(linea)
+    #         elif (l == 1):
+    #             m = int(linea)
+    #         else:
+    #             #   Definimos una nueva relación
+    #             pareja = linea.split()
+    #             bosque.addConexion(pareja[0],pareja[1])
+    #         l = l + 1
 
 
     if fextra != "":
