@@ -61,6 +61,8 @@ def main():
     # Leemos el documento y construimos el árbol conexión
     tiempo1 = time.time()
     leer_relaciones(principal, extra)
+    print("reseteamos relaciones")
+    bosque.maxNivel = 0
     t_leer_doc = time.time() - tiempo1
 
     # Construimos los grumos como árboles
