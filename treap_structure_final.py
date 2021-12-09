@@ -49,11 +49,32 @@ class Bosque(NodoArbol):
         usuario2 = self.conexiones.addUsuario(id2)
         usuario2.relaciones.append(id1)
 
-    def addGrumo(self,grumo,grumos):
-        mitad = len(grumos)//2
-        mediana = grumos[mitad]
-        if mediana[1] > grumo[1]:
-            self.addGrumo(self,grumo,grumos[:mitad])
+    def addGrumo(self,grumo,lista,pos=0):
+        # Si se ha acabado la lista metemos nuestro grumo
+        if len(lista)==0:
+            self.grumos.insert(pos,grumo)
+            return
+
+        # Determinamos la mediana para comparar
+        mitad = len(lista)//2
+        mediana = lista[mitad][1]
+        if len(lista)%2==0:
+            mediana = (mediana + lista[mitad-1][1])/2
+
+        # Elegimos a cual de las dos mitades pertenece nuestro nuevo grumo
+        if mediana < grumo[1]:
+            self.addGrumo(grumo,lista[:mitad],pos)
+            return
+        # Incrementamos la posición  
+        pos += mitad + 1
+
+        if mediana > grumo[1]:
+            # Si pertenece a la segunda mitad sumamos la posición  
+            self.addGrumo(grumo,lista[mitad+1:],pos)
+            return
+        else:
+            self.addGrumo(grumo,[],pos)
+            return
 
     def construirGrumos(self,grumo,id):
         raizGrumo = grumo[0]
@@ -78,7 +99,7 @@ class Bosque(NodoArbol):
             grumo = [NodoArbol(raizGrumoConex.id), 0]
             for hijo in raizGrumoConex.relaciones:
                 self.construirGrumos(grumo,hijo)
-            se
+            self.addGrumo(grumo,self.grumos)
 
         #   A continuación seguimos descendiendo en el árbol de conexiones
         if raizGrumoConex.hijoMenor:
@@ -105,9 +126,6 @@ class Bosque(NodoArbol):
         tamañoTotal = self.numUsuarios()[0]
         grumosSeleccionados = []
         
-        #   Ordenamos los grumos por tamaño
-        self.grumos.sort(key= lambda grumo : grumo[1], reverse = True)
-
         for grumo in self.grumos:
             grumoPorcentaje = grumo[1]/tamañoTotal
             grumosSeleccionados.append(grumo)

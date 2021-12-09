@@ -43,12 +43,12 @@ def addGrumo(grumo,grumos,lista,pos=0):
             mediana = (mediana + lista[mitad-1][1])/2
 
         # Elegimos a cual de las dos mitades pertenece nuestro nuevo grumo
-        if mediana > grumo[1]:
+        if mediana < grumo[1]:
             addGrumo(grumo,grumos,lista[:mitad],pos)
             return
         # Incrementamos la posición  
         pos += mitad + 1
-        if mediana < grumo[1]:
+        if mediana > grumo[1]:
             # Si pertenece a la segunda mitad sumamos la posición
             
             addGrumo(grumo,grumos,lista[mitad+1:],pos)
@@ -57,7 +57,7 @@ def addGrumo(grumo,grumos,lista,pos=0):
             addGrumo(grumo,grumos,[],pos)
             return
 
-array = [[1,1],[2,2],[3,3],[4,4],[5,5]]
+array = [[5,5],[4,4],[3,3],[2,2]]
 
 grumos = [[2,2],[6,7],[4,5],[7,9],[3,8]]
 for grumo in grumos:
