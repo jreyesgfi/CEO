@@ -1,6 +1,9 @@
 import time
 import treap_structure_final as treap
 
+
+
+
 #   Definimos nuestro bosque que contiene todos nuestros árboles
 bosque = treap.Bosque()
 bosque.___init__()
@@ -44,7 +47,7 @@ def salvar_nuevas_relaciones(grumosSeleccionados):
         # Comprobamos que no estamos en el primer grupo
         if grumoPasado != None:
             # Proponemos la nueva relación
-            f.write(grumo['raiz'].id+" "+grumoPasado['raiz'].id+"\n")
+            f.write(grumo[0].id+" "+grumoPasado[0].id+"\n")
 
         # Definimos el nuevo grumo
         grumoPasado = grumo
@@ -61,22 +64,26 @@ def main():
     t_leer_doc = time.time() - tiempo1
 
     # Construimos los grumos como árboles
-    tiempo1=time.time()
+    tiempo1 = time.time()
     bosque.crearGrumos(bosque.conexiones)
     t_lista_grumos = time.time() - tiempo1
 
     # Selección de grumos
-    tiempo1=time.time()
-    grumosSeleccionados = bosque.obtenerPorcentajes(porcen)
+    tiempo1 = time.time()
+    grumosSeleccionados = bosque.seleccionarGrumos(porcen)
     if extra =='' :
         salvar_nuevas_relaciones(grumosSeleccionados)
     t_seleccion_grumos = time.time() - tiempo1
 
+    # Total de usuarios y grumos
+    [numUsuarios,numGrumos] = bosque.numUsuarios()    # Podría tomarse del documento
 
 
     #---MOSTRAR POR PANTALLA RESULTADOS---#
 
     #   Usuarios conexiones y porcentaje
+    print("Número de usuarios ", numUsuarios)
+    print("Existen {} grumos.".format( numGrumos ) )
     #   print("Número de usuarios: " + str(len(usr))+". "+"Número de relaciones: "+ str(len(red)) + ".")
     print("Tamaño en porcentaje del mayor grumo deseado: " + str(porcen*100) + "%.")
 
@@ -85,14 +92,13 @@ def main():
     print("Duración creación lista grumos: {:.5f} seg.".format(t_lista_grumos) )
     print("Duración selección grumos: {:.5f} seg.".format(t_seleccion_grumos) )
 
-    #   Ranking grumos
-    print("Existen {} grumos.".format( len(bosque.grumos) ) )
-
+    #---RANKING GRUMOS---#
     #   Recuperamos cada uno de los porcentajes de los grumos
     i = 0
     for grumo in grumosSeleccionados:
         i += 1
-        print("El porcentaje del grumo {} es {:.2f}%".format (i, grumo['porcentaje']*100 ) )
+        print("El grumo {} contiene {} usuarios. Representa un {:.2f}% del total."
+        .format (i, grumo[1], grumo[1]/numUsuarios*100 ) )
 
 
     #   Recomendaciones de uniones

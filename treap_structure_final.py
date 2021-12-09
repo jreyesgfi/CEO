@@ -1,3 +1,4 @@
+
 class NodoArbol:
     def __init__(self, id = None):
         self.id = id
@@ -7,22 +8,25 @@ class NodoArbol:
         self.nuevo = True
 
     def addUsuario(self,id):
-        if self.id == None:
+        try:
+            if self.id > id:
+                if self.hijoMenor:
+                    return self.hijoMenor.addUsuario(id)
+                self.hijoMenor = NodoArbol(id)
+                return self.hijoMenor
+            if self.id < id:
+                if self.hijoMayor:
+                    return self.hijoMayor.addUsuario(id)
+                self.hijoMayor = NodoArbol(id)
+                return self.hijoMayor
+            #   Indicamos que el nodo ya existía
+            self.nuevo = False
+            return self
+
+        #   Si self.id = None entoces estamos en la raiz
+        except:
             self.id = id
             return self
-        if self.id > id:
-            if self.hijoMenor:
-                return self.hijoMenor.addUsuario(id)
-            self.hijoMenor = NodoArbol(id)
-            return self.hijoMenor
-        if self.id < id:
-            if self.hijoMayor:
-                return self.hijoMayor.addUsuario(id)
-            self.hijoMayor = NodoArbol(id)
-            return self.hijoMayor
-        #   Indicamos que el nodo ya existía
-        self.nuevo = False
-        return self
 
 
 class Bosque(NodoArbol):
@@ -36,6 +40,7 @@ class Bosque(NodoArbol):
         self.grumos = []
 
     def addConexion(self,id1, id2):
+        
         #  Añadimos el usuario1 al árbol de conexiones y el usuario2 a sus relaciones
         usuario1 = self.conexiones.addUsuario(id1)
         usuario1.relaciones.append(id2)
@@ -44,26 +49,36 @@ class Bosque(NodoArbol):
         usuario2 = self.conexiones.addUsuario(id2)
         usuario2.relaciones.append(id1)
 
-    def construirGrumos(self,raizGrumo,id):
+    def addGrumo(self,grumo,grumos):
+        mitad = len(grumos)//2
+        mediana = grumos[mitad]
+        if mediana[1] > grumo[1]:
+            self.addGrumo(self,grumo,grumos[:mitad])
+
+    def construirGrumos(self,grumo,id):
+        raizGrumo = grumo[0]
         # comprobar si usuario esta asig y si no lo añadimos
         usuarioAssig = self.assig.addUsuario(id)
         if usuarioAssig.nuevo:
 
-            #   Añadimos el usuario al árbol del grumo particular
+            #   Añadimos el usuario al árbol del grumo particular y aumentamos el tamaño
             raizGrumo.addUsuario(id)
+            grumo[1] += 1
+
+            #   Iteramos sobre sus relaciones
             for hijo in self.conexiones.addUsuario(id).relaciones:
-                self.construirGrumos(raizGrumo,hijo)
+                self.construirGrumos(grumo,hijo)
     
     def crearGrumos(self, raizGrumoConex):
 
         # comprobar si usuario esta asig y si no lo añadimos
         usuarioAssig = self.assig.addUsuario(raizGrumoConex.id)
         if usuarioAssig.nuevo:
-            #   Si no estaba creamos un nuevo grumo
-            raizGrumo = NodoArbol(raizGrumoConex.id)
-            self.grumos.append(raizGrumo)
+            #   Si no estaba creamos un nuevo grumo: raíz y tamaño
+            grumo = [NodoArbol(raizGrumoConex.id), 0]
             for hijo in raizGrumoConex.relaciones:
-                self.construirGrumos(raizGrumo,hijo)
+                self.construirGrumos(grumo,hijo)
+            se
 
         #   A continuación seguimos descendiendo en el árbol de conexiones
         if raizGrumoConex.hijoMenor:
@@ -75,7 +90,7 @@ class Bosque(NodoArbol):
     #----MÉTODOS DE REPRESENTACIÓN---#  
     def representarGrumos(self):
         for grumo in self.grumos:
-            print(self.representarEnCascada(grumo))
+            print(self.representarEnCascada(grumo[0]))
     def representarEnCascada(self, elemento,espacios=0,iteraciones=20):
         
         espacios += 1
@@ -86,31 +101,29 @@ class Bosque(NodoArbol):
             cadena = "{}->|{} \n{}|{}".format(elemento.id,self.representarEnCascada(elemento.hijoMenor,espacios,iteraciones),(" "*espacios),self.representarEnCascada(elemento.hijoMayor,espacios,iteraciones))
         return cadena
 
-    def obtenerPorcentajes(self,porcentaje):
-        tamañoTotal = self.tamañoGrumo(self.conexiones)
+    def seleccionarGrumos(self,porcentaje):
+        tamañoTotal = self.numUsuarios()[0]
         grumosSeleccionados = []
+        
+        #   Ordenamos los grumos por tamaño
+        self.grumos.sort(key= lambda grumo : grumo[1], reverse = True)
+
         for grumo in self.grumos:
-            grumoPorcentaje = self.tamañoGrumo(grumo)/tamañoTotal
-            grumosSeleccionados.append( {'raiz': grumo, 'porcentaje':grumoPorcentaje} )
+            grumoPorcentaje = grumo[1]/tamañoTotal
+            grumosSeleccionados.append(grumo)
 
             #   Comprobamos si hemos llegado al porcentaje necesario
             porcentaje -= grumoPorcentaje
             if porcentaje <= 0:
 
-                #   Si es así ordenamos los grumos y los devolvemos
-                grumosSeleccionados.sort(key= lambda grumo : grumo['porcentaje'], reverse = True)
+                # Si es así los devolvemos
                 return grumosSeleccionados
 
-        
-            
+    def numUsuarios(self):
+        numUsuarios = 0
+        numGrumos = 0
+        for grumo in self.grumos:
+            numUsuarios += grumo[1] + 1
+            numGrumos += 1
+        return [numUsuarios,numGrumos]
 
-
-    def tamañoGrumo(self,usuario):
-        valor = 1
-
-        if usuario.hijoMayor:
-            valor += self.tamañoGrumo(usuario.hijoMayor)
-        if usuario.hijoMenor:
-            valor += self.tamañoGrumo(usuario.hijoMenor)
-
-        return valor

@@ -15,15 +15,51 @@
 # for hijo in tree.hijos:
 #     print(tree.representarEnCascada(hijo))
 
-import treap_structure_final as treap
+# import treap_structure_final as treap
 
-bosque = treap.Bosque()
-bosque.___init__()
-for parejaNumero in [(5,2),(10,3),(21,15),(4,2),(5,7),(8,10),(8,4)]:
-    bosque.addConexion(parejaNumero[0],parejaNumero[1])
-bosque.crearGrumos(bosque.conexiones)
-bosque.representarGrumos()
-i = 0
-for porcentaje in bosque.obtenerPorcentajes():
-    i += 1
-    print("El porcentaje del grumo {} es {:.2f}".format(i,porcentaje))
+# bosque = treap.Bosque()
+# bosque.___init__()
+# for parejaNumero in [(5,2),(10,3),(21,15),(4,2),(5,7),(8,10),(8,4)]:
+#     bosque.addConexion(parejaNumero[0],parejaNumero[1])
+# bosque.crearGrumos(bosque.conexiones)
+# bosque.representarGrumos()
+# i = 0
+# for porcentaje in bosque.obtenerPorcentajes():
+#     i += 1
+#     print("El porcentaje del grumo {} es {:.2f}".format(i,porcentaje))
+
+def addGrumo(grumo,grumos,lista,pos=0):
+        print(lista,pos)
+        # Si se ha acabado la lista metemos nuestro grumo
+        if len(lista)==0:
+            grumos.insert(pos,grumo)
+            return
+
+        # Determinamos la mediana para comparar
+        
+        mitad = len(lista)//2
+        mediana = lista[mitad][1]
+        if len(lista)%2==0:
+            mediana = (mediana + lista[mitad-1][1])/2
+
+        # Elegimos a cual de las dos mitades pertenece nuestro nuevo grumo
+        if mediana > grumo[1]:
+            addGrumo(grumo,grumos,lista[:mitad],pos)
+            return
+        # Incrementamos la posición  
+        pos += mitad + 1
+        if mediana < grumo[1]:
+            # Si pertenece a la segunda mitad sumamos la posición
+            
+            addGrumo(grumo,grumos,lista[mitad+1:],pos)
+            return
+        else:
+            addGrumo(grumo,grumos,[],pos)
+            return
+
+array = [[1,1],[2,2],[3,3],[4,4],[5,5]]
+
+grumos = [[2,2],[6,7],[4,5],[7,9],[3,8]]
+for grumo in grumos:
+    addGrumo(grumo,array,array)
+    print(array)
