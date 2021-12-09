@@ -30,25 +30,24 @@ def addElementoMediana(listaTotal,elemento,lista,pos=0):
             addElementoMediana(listaTotal,elemento,[],pos)
             return
 class NodoArbol:
-    def __init__(self, id = None, nivel = 0):
+    def __init__(self, id = None):
         self.id = id
         self.hijoMayor = None
         self.hijoMenor = None
         self.relaciones = []
         self.nuevo = True
-        self.nivel = nivel
 
-    def addUsuario(self,id, nivel=0):
+    def addUsuario(self,id):
         try:
             if self.id > id:
                 if self.hijoMenor:
-                    return self.hijoMenor.addUsuario(id,nivel+1)
-                self.hijoMenor = NodoArbol(id, nivel)
+                    return self.hijoMenor.addUsuario(id)
+                self.hijoMenor = NodoArbol(id)
                 return self.hijoMenor
             if self.id < id:
                 if self.hijoMayor:
-                    return self.hijoMayor.addUsuario(id,nivel+1)
-                self.hijoMayor = NodoArbol(id, nivel)
+                    return self.hijoMayor.addUsuario(id)
+                self.hijoMayor = NodoArbol(id)
                 return self.hijoMayor
             #   Indicamos que el nodo ya existía
             self.nuevo = False
@@ -69,23 +68,23 @@ class Bosque(NodoArbol):
         self.assig = NodoArbol()
         self.conexiones = NodoArbol()
         self.grumos = []
-        self.maxNivel = 0
+        # self.maxNivel = 0
 
     def addConexion(self,id1, id2):
         
         #  Añadimos el usuario1 al árbol de conexiones y el usuario2 a sus relaciones
         usuario1 = self.conexiones.addUsuario(id1)
         usuario1.relaciones.append(id2)
-        if usuario1.nivel > self.maxNivel:
-                self.maxNivel = usuario1.nivel
-                print(self.maxNivel)
+        # if usuario1.nivel > self.maxNivel:
+        #         self.maxNivel = usuario1.nivel
+        #         print(self.maxNivel)
 
         #   También lo hacemos al revés
         usuario2 = self.conexiones.addUsuario(id2)
         usuario2.relaciones.append(id1)
-        if usuario2.nivel > self.maxNivel:
-                self.maxNivel = usuario2.nivel
-                print(self.maxNivel)
+        # if usuario2.nivel > self.maxNivel:
+        #     self.maxNivel = usuario2.nivel
+        #     print(self.maxNivel)
 
 
     def construirGrumos(self,grumo,id):
@@ -97,9 +96,9 @@ class Bosque(NodoArbol):
 
             #   Añadimos el usuario al árbol del grumo particular y aumentamos el tamaño
             usuarioGrumo = raizGrumo.addUsuario(id)
-            if usuarioGrumo.nivel > self.maxNivel:
-                self.maxNivel = usuarioGrumo.nivel
-                print(self.maxNivel)
+            # if usuarioGrumo.nivel > self.maxNivel:
+            #     self.maxNivel = usuarioGrumo.nivel
+            #     print(self.maxNivel)
 
             grumo[1] += 1
 
