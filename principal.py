@@ -17,11 +17,12 @@ def leer_relaciones(fprin, fextra):
     with open(fprin) as f: 
 
         #   Construimos el array para poder leer las líneas desordenadas
+        usuarios = f.readline()
+        numLineas = int(f.readline())
         content = f.readlines()
-        numLineas = int(content[1])
-        while numLineas > 2:
+        while numLineas > 0:
             #  Leemos aleatoriamente para mejorar eficiencia
-            linea = random.randint(2, numLineas)
+            linea = random.randint(0, numLineas-1)
             pareja = content[linea].split()
 
             #   Definimos una nueva relación
