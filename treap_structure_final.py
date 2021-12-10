@@ -112,7 +112,7 @@ class Bosque(NodoArbol):
         usuarioAssig = self.assig.addUsuario(raizGrumoConex.id)
         if usuarioAssig.nuevo:
             #   Si no estaba creamos un nuevo grumo: raíz y tamaño
-            grumo = [NodoArbol(raizGrumoConex.id), 0]
+            grumo = [NodoArbol(raizGrumoConex.id), 1]
             for hijo in raizGrumoConex.relaciones:
                 self.construirGrumos(grumo,hijo)
             addElementoMediana(self.grumos,grumo,self.grumos)
@@ -128,6 +128,7 @@ class Bosque(NodoArbol):
     def representarGrumos(self):
         for grumo in self.grumos:
             print(self.representarEnCascada(grumo[0]))
+            
     def representarEnCascada(self, elemento,espacios=0,iteraciones=20):
         
         espacios += 1
@@ -157,7 +158,7 @@ class Bosque(NodoArbol):
         numUsuarios = 0
         numGrumos = 0
         for grumo in self.grumos:
-            numUsuarios += grumo[1] + 1
+            numUsuarios += grumo[1]
             numGrumos += 1
         return [numUsuarios,numGrumos]
 
